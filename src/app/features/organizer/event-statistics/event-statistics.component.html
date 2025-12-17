@@ -1,0 +1,269 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- En-tête -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">Statistiques</h1>
+          <p class="text-gray-600">Analysez les performances de vos événements</p>
+        </div>
+        <button
+          routerLink="/organizer/dashboard"
+          class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg transition duration-150 flex items-center text-sm font-medium"
+        >
+          <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Retour au dashboard
+        </button>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <div *ngIf="isLoading" class="py-12">
+      <app-loading-spinner message="Calcul des statistiques..." size="large"></app-loading-spinner>
+    </div>
+
+    <!-- Contenu -->
+    <div *ngIf="!isLoading">
+
+      <!-- Statistiques générales -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        
+        <!-- Total événements -->
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 mb-1">Total événements</p>
+              <p class="text-3xl font-bold text-gray-900">{{ totalEvents }}</p>
+            </div>
+            <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">
+            <span class="text-green-600 font-semibold">{{ publishedEvents }}</span> publiés
+          </p>
+        </div>
+
+        <!-- Total participants -->
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 mb-1">Total participants</p>
+              <p class="text-3xl font-bold text-gray-900">{{ totalParticipants }}</p>
+            </div>
+            <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">
+            Sur <span class="font-semibold">{{ totalCapacity }}</span> places
+          </p>
+        </div>
+
+        <!-- Taux de remplissage -->
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-yellow-500">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 mb-1">Taux de remplissage</p>
+              <p class="text-3xl font-bold text-gray-900">{{ averageFillRate }}%</p>
+            </div>
+            <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+              <svg class="h-6 w-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Moyenne globale</p>
+        </div>
+
+        <!-- Annulations -->
+        <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-red-500">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 mb-1">Annulations</p>
+              <p class="text-3xl font-bold text-gray-900">{{ cancelledEvents }}</p>
+            </div>
+            <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
+              <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">
+            <span class="font-semibold">{{ completedEvents }}</span> terminés
+          </p>
+        </div>
+      </div>
+
+      <!-- Graphiques en 2 colonnes -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        
+        <!-- Graphique : Événements par mois -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center">
+            <svg class="h-5 w-5 mr-2 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Événements par mois
+          </h2>
+
+          <div *ngIf="monthlyStats.length === 0" class="text-center py-8 text-gray-500">
+            Aucune donnée disponible
+          </div>
+
+          <div *ngIf="monthlyStats.length > 0" class="space-y-4">
+            <div *ngFor="let stat of monthlyStats" class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span class="font-medium text-gray-700">{{ stat.month }}</span>
+                <span class="font-bold text-gray-900">{{ stat.count }} événement{{ stat.count > 1 ? 's' : '' }}</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-3">
+                <div 
+                  class="bg-primary-600 h-3 rounded-full transition-all duration-500"
+                  [style.width.%]="stat.percentage"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Graphique : Participants par événement -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center">
+            <svg class="h-5 w-5 mr-2 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Top 5 - Participants
+          </h2>
+
+          <div *ngIf="eventsWithParticipants.length === 0" class="text-center py-8 text-gray-500">
+            Aucune donnée disponible
+          </div>
+
+          <div *ngIf="eventsWithParticipants.length > 0" class="space-y-4">
+            <div *ngFor="let item of eventsWithParticipants; let i = index" class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span class="font-medium text-gray-700 truncate mr-2">
+                  <span class="inline-block w-6 h-6 rounded-full bg-green-100 text-green-600 text-xs font-bold flex items-center justify-center mr-2">
+                    {{ i + 1 }}
+                  </span>
+                  {{ item.event.title }}
+                </span>
+                <span class="font-bold text-gray-900 whitespace-nowrap">{{ item.count }}</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-3">
+                <div 
+                  class="bg-green-600 h-3 rounded-full transition-all duration-500"
+                  [style.width.%]="item.percentage"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tableau : Top 5 événements les plus populaires -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-bold text-gray-900 flex items-center">
+            <svg class="h-5 w-5 mr-2 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            </svg>
+            Top 5 - Événements les plus populaires
+          </h2>
+        </div>
+
+        <div *ngIf="topEvents.length === 0" class="px-6 py-8 text-center text-gray-500">
+          Aucun événement disponible
+        </div>
+
+        <div *ngIf="topEvents.length > 0" class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  #
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Événement
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Participants
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Taux de remplissage
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Statut
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr 
+                *ngFor="let item of topEvents; let i = index"
+                (click)="viewEventDetails(item.event.id)"
+                class="hover:bg-gray-50 cursor-pointer transition duration-150"
+              >
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm"
+                    [ngClass]="{
+                      'bg-yellow-100 text-yellow-800': i === 0,
+                      'bg-gray-100 text-gray-800': i === 1,
+                      'bg-orange-100 text-orange-800': i === 2,
+                      'bg-blue-100 text-blue-800': i > 2
+                    }"
+                  >
+                    {{ i + 1 }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm font-medium text-gray-900">{{ item.event.title }}</div>
+                  <div class="text-sm text-gray-500">{{ item.event.category }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatDate(item.event.eventDate) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-semibold text-gray-900">
+                    {{ item.participantsCount }} / {{ item.event.capacity }}
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="w-full max-w-xs bg-gray-200 rounded-full h-2 mr-2">
+                      <div 
+                        class="h-2 rounded-full transition-all duration-300"
+                        [ngClass]="getFillRateClass(item.fillRate)"
+                        [style.width.%]="item.fillRate"
+                      ></div>
+                    </div>
+                    <span class="text-sm font-semibold text-gray-900">{{ item.fillRate }}%</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span 
+                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    [ngClass]="getStatusBadgeClass(item.event.status)"
+                  >
+                    {{ getStatusLabel(item.event.status) }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

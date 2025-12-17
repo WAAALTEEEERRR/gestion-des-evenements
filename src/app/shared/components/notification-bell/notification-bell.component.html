@@ -1,0 +1,110 @@
+<div class="relative">
+  <!-- Bouton cloche avec badge -->
+  <button
+    (click)="toggleDropdown()"
+    type="button"
+    class="relative p-2 text-gray-500 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-full transition duration-150"
+  >
+    <!-- Icône cloche -->
+    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+    </svg>
+
+    <!-- Badge nombre de notifications non lues -->
+    <span
+      *ngIf="unreadCount > 0"
+      class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full"
+    >
+      {{ unreadCount > 99 ? '99+' : unreadCount }}
+    </span>
+  </button>
+
+  <!-- Dropdown des notifications -->
+  <div
+    *ngIf="isDropdownOpen"
+    class="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50"
+  >
+    <!-- En-tête -->
+    <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+      <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+      <button
+        *ngIf="unreadCount > 0"
+        (click)="markAllAsRead()"
+        class="text-xs text-primary-600 hover:text-primary-700 font-medium"
+      >
+        Tout marquer comme lu
+      </button>
+    </div>
+
+    <!-- Liste des notifications -->
+    <div class="max-h-96 overflow-y-auto">
+      <!-- Chargement -->
+      <div *ngIf="isLoading" class="flex items-center justify-center py-8">
+        <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
+
+      <!-- Aucune notification -->
+      <div *ngIf="!isLoading && recentNotifications.length === 0" class="px-4 py-8 text-center">
+        <div class="text-4xl mb-2">🔔</div>
+        <p class="text-sm text-gray-500">Aucune notification</p>
+      </div>
+
+      <!-- Liste des notifications récentes -->
+      <div *ngIf="!isLoading && recentNotifications.length > 0">
+        <button
+          *ngFor="let notification of recentNotifications"
+          (click)="markAsRead(notification)"
+          type="button"
+          class="w-full px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 transition duration-150 text-left"
+          [class.bg-blue-50]="isUnread(notification)"
+        >
+          <div class="flex items-start">
+            <!-- Icône -->
+            <div class="flex-shrink-0 text-2xl mr-3">
+              {{ getNotificationIcon(notification.type) }}
+            </div>
+
+            <!-- Contenu -->
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 line-clamp-1">
+                {{ notification.title }}
+              </p>
+              <p class="text-xs text-gray-600 mt-1 line-clamp-2">
+                {{ notification.message }}
+              </p>
+              <p class="text-xs text-gray-400 mt-1">
+                {{ getRelativeTime(notification.createdAt!) }}
+              </p>
+            </div>
+
+            <!-- Indicateur non lu -->
+            <div *ngIf="isUnread(notification)" class="flex-shrink-0 ml-2">
+              <span class="inline-block w-2 h-2 bg-primary-600 rounded-full"></span>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pied : Lien vers toutes les notifications -->
+    <div class="px-4 py-3 border-t border-gray-200 text-center">
+      <a
+        routerLink="/notifications"
+        (click)="closeDropdown()"
+        class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+      >
+        Voir toutes les notifications
+      </a>
+    </div>
+  </div>
+
+  <!-- Overlay pour fermer le dropdown en cliquant à l'extérieur -->
+  <div
+    *ngIf="isDropdownOpen"
+    (click)="closeDropdown()"
+    class="fixed inset-0 z-40"
+  ></div>
+</div>

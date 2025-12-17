@@ -1,0 +1,237 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- En-tête -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Mes événements</h1>
+        <p class="text-gray-600">Gérez tous vos événements en un seul endroit</p>
+      </div>
+      <button
+        (click)="createNewEvent()"
+        class="mt-4 md:mt-0 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition duration-150 flex items-center"
+      >
+        <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Créer un événement
+      </button>
+    </div>
+
+    <!-- Filtres par statut (badges) -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div class="flex flex-wrap gap-3">
+        <button
+          (click)="onFilterChange('all')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-primary-600 text-white': selectedFilter === 'all',
+            'bg-gray-100 text-gray-700 hover:bg-gray-200': selectedFilter !== 'all'
+          }"
+        >
+          Tous ({{ stats.all }})
+        </button>
+        <button
+          (click)="onFilterChange('published')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-green-600 text-white': selectedFilter === 'published',
+            'bg-green-100 text-green-700 hover:bg-green-200': selectedFilter !== 'published'
+          }"
+        >
+          Publiés ({{ stats.published }})
+        </button>
+        <button
+          (click)="onFilterChange('draft')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-gray-600 text-white': selectedFilter === 'draft',
+            'bg-gray-100 text-gray-700 hover:bg-gray-200': selectedFilter !== 'draft'
+          }"
+        >
+          Brouillons ({{ stats.draft }})
+        </button>
+        <button
+          (click)="onFilterChange('completed')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-blue-600 text-white': selectedFilter === 'completed',
+            'bg-blue-100 text-blue-700 hover:bg-blue-200': selectedFilter !== 'completed'
+          }"
+        >
+          Terminés ({{ stats.completed }})
+        </button>
+        <button
+          (click)="onFilterChange('cancelled')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-red-600 text-white': selectedFilter === 'cancelled',
+            'bg-red-100 text-red-700 hover:bg-red-200': selectedFilter !== 'cancelled'
+          }"
+        >
+          Annulés ({{ stats.cancelled }})
+        </button>
+      </div>
+    </div>
+
+    <!-- Barre de recherche et actions -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <!-- Recherche -->
+        <div class="flex-1">
+          <div class="relative">
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()"
+              placeholder="Rechercher un événement..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <svg class="absolute left-3 top-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Bouton basculer vue -->
+        <button
+          (click)="toggleDisplayMode()"
+          class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-150 flex items-center justify-center"
+          [title]="displayMode === 'card' ? 'Vue liste' : 'Vue carte'"
+        >
+          <svg *ngIf="displayMode === 'card'" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+          </svg>
+          <svg *ngIf="displayMode === 'list'" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Compteur de résultats -->
+      <div class="mt-4 pt-4 border-t border-gray-200">
+        <p class="text-sm text-gray-600">
+          <span class="font-semibold text-gray-900">{{ filteredEvents.length }}</span>
+          {{ filteredEvents.length > 1 ? 'événements trouvés' : 'événement trouvé' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <app-loading-spinner 
+      *ngIf="isLoading" 
+      message="Chargement de vos événements..."
+      size="large"
+    ></app-loading-spinner>
+
+    <!-- Erreur -->
+    <div *ngIf="error && !isLoading" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+      <div class="text-red-600 mb-4">
+        <svg class="h-12 w-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <p class="text-red-800 font-medium mb-4">{{ error }}</p>
+      <button
+        (click)="reload()"
+        class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-150"
+      >
+        Réessayer
+      </button>
+    </div>
+
+    <!-- Liste des événements (mode CARD) -->
+    <div *ngIf="!isLoading && !error && displayMode === 'card'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let event of filteredEvents" class="relative">
+        <app-event-card
+          [event]="event"
+          [displayMode]="displayMode"
+          [showActions]="true"
+          (edit)="editEvent($event)"
+          (delete)="deleteEvent($event)"
+          (viewParticipants)="viewParticipants($event)"
+        ></app-event-card>
+        
+        <!-- Bouton Publier (si brouillon) -->
+        <button
+          *ngIf="event.status === 'DRAFT'"
+          (click)="publishEvent(event)"
+          class="absolute top-2 right-2 bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700 transition duration-150 shadow-lg"
+        >
+          Publier
+        </button>
+
+        <!-- Bouton Annuler (si publié) -->
+        <button
+          *ngIf="event.status === 'PUBLISHED'"
+          (click)="cancelEvent(event)"
+          class="absolute top-2 right-2 bg-orange-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-orange-700 transition duration-150 shadow-lg"
+        >
+          Annuler
+        </button>
+      </div>
+    </div>
+
+    <!-- Liste des événements (mode LIST) -->
+    <div *ngIf="!isLoading && !error && displayMode === 'list'" class="space-y-4">
+      <div *ngFor="let event of filteredEvents" class="relative">
+        <app-event-card
+          [event]="event"
+          [displayMode]="displayMode"
+          [showActions]="true"
+          (edit)="editEvent($event)"
+          (delete)="deleteEvent($event)"
+          (viewParticipants)="viewParticipants($event)"
+        ></app-event-card>
+
+        <!-- Boutons additionnels en mode liste -->
+        <div class="absolute top-4 right-4 flex gap-2">
+          <button
+            *ngIf="event.status === 'DRAFT'"
+            (click)="publishEvent(event)"
+            class="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700 transition duration-150 shadow-lg"
+          >
+            Publier
+          </button>
+          <button
+            *ngIf="event.status === 'PUBLISHED'"
+            (click)="cancelEvent(event)"
+            class="bg-orange-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-orange-700 transition duration-150 shadow-lg"
+          >
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aucun événement trouvé -->
+    <div *ngIf="!isLoading && !error && filteredEvents.length === 0" class="bg-white rounded-lg shadow-sm p-12 text-center">
+      <div class="text-6xl mb-4">📅</div>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">
+        {{ searchTerm ? 'Aucun événement trouvé' : 'Aucun événement' }}
+      </h3>
+      <p class="text-gray-600 mb-6">
+        {{ searchTerm 
+          ? 'Essayez de modifier votre recherche ou vos filtres.' 
+          : 'Vous n\'avez pas encore créé d\'événement dans cette catégorie.' 
+        }}
+      </p>
+      <div class="flex gap-4 justify-center">
+        <button
+          *ngIf="searchTerm || selectedFilter !== 'all'"
+          (click)="searchTerm = ''; selectedFilter = 'all'; applyFilters()"
+          class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-150"
+        >
+          Réinitialiser les filtres
+        </button>
+        <button
+          (click)="createNewEvent()"
+          class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition duration-150"
+        >
+          Créer un événement
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

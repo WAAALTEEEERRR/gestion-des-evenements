@@ -1,0 +1,267 @@
+<!-- Conteneur principal avec fond dégradé -->
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 py-12 px-4 sm:px-6 lg:px-8">
+  
+  <!-- Carte d'inscription -->
+  <div class="max-w-2xl w-full space-y-8 bg-white rounded-2xl shadow-2xl p-8">
+    
+    <!-- En-tête -->
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-gray-900">
+        Créer un compte
+      </h2>
+      <p class="mt-2 text-sm text-gray-600">
+        Rejoignez notre plateforme d'événements
+      </p>
+    </div>
+
+    <!-- Message de succès -->
+    <div *ngIf="successMessage" class="bg-green-50 border-l-4 border-green-500 p-4 rounded-md" role="alert">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-green-700">{{ successMessage }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="errorMessage" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md" role="alert">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-red-700">{{ errorMessage }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire d'inscription -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
+      
+      <!-- Sélection du rôle (Cartes) -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-3">
+          Je suis un(e) :
+        </label>
+        <div class="grid grid-cols-2 gap-4">
+          <div 
+            *ngFor="let userRole of userRoles"
+            (click)="selectRole(userRole.value)"
+            class="relative cursor-pointer rounded-lg border p-4 transition duration-200"
+            [class.border-primary-500]="role?.value === userRole.value"
+            [class.bg-primary-50]="role?.value === userRole.value"
+            [class.border-gray-300]="role?.value !== userRole.value"
+            [class.hover:border-primary-400]="role?.value !== userRole.value"
+          >
+            <div class="text-center">
+              <div class="text-4xl mb-2">{{ userRole.icon }}</div>
+              <div class="font-semibold text-gray-900">{{ userRole.label }}</div>
+              <div class="text-xs text-gray-600 mt-1">{{ userRole.description }}</div>
+            </div>
+            <!-- Indicateur de sélection -->
+            <div 
+              *ngIf="role?.value === userRole.value"
+              class="absolute top-2 right-2"
+            >
+              <svg class="h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prénom et Nom (sur 2 colonnes) -->
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <!-- Prénom -->
+        <div>
+          <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">
+            Prénom *
+          </label>
+          <input 
+            id="firstName" 
+            type="text" 
+            formControlName="firstName"
+            class="input-field"
+            [class.border-red-500]="firstName?.invalid && firstName?.touched"
+            placeholder="Jean"
+          />
+          <p *ngIf="firstName?.invalid && firstName?.touched" class="mt-1 text-sm text-red-600">
+            <span *ngIf="firstName?.errors?.['required']">Le prénom est obligatoire</span>
+            <span *ngIf="firstName?.errors?.['minlength']">Minimum 2 caractères</span>
+          </p>
+        </div>
+
+        <!-- Nom -->
+        <div>
+          <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">
+            Nom *
+          </label>
+          <input 
+            id="lastName" 
+            type="text" 
+            formControlName="lastName"
+            class="input-field"
+            [class.border-red-500]="lastName?.invalid && lastName?.touched"
+            placeholder="Dupont"
+          />
+          <p *ngIf="lastName?.invalid && lastName?.touched" class="mt-1 text-sm text-red-600">
+            <span *ngIf="lastName?.errors?.['required']">Le nom est obligatoire</span>
+            <span *ngIf="lastName?.errors?.['minlength']">Minimum 2 caractères</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+          Adresse email *
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+            </svg>
+          </div>
+          <input 
+            id="email" 
+            type="email" 
+            formControlName="email"
+            class="input-field pl-10"
+            [class.border-red-500]="email?.invalid && email?.touched"
+            placeholder="exemple@email.com"
+          />
+        </div>
+        <p *ngIf="email?.invalid && email?.touched" class="mt-1 text-sm text-red-600">
+          <span *ngIf="email?.errors?.['required']">L'email est obligatoire</span>
+          <span *ngIf="email?.errors?.['email']">Email invalide</span>
+        </p>
+      </div>
+
+      <!-- Téléphone (optionnel) -->
+      <div>
+        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+          Téléphone <span class="text-gray-500">(optionnel)</span>
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+            </svg>
+          </div>
+          <input 
+            id="phone" 
+            type="tel" 
+            formControlName="phone"
+            class="input-field pl-10"
+            [class.border-red-500]="phone?.invalid && phone?.touched"
+            placeholder="0612345678"
+          />
+        </div>
+        <p *ngIf="phone?.invalid && phone?.touched" class="mt-1 text-sm text-red-600">
+          <span *ngIf="phone?.errors?.['pattern']">Format : 10 chiffres (ex: 0612345678)</span>
+        </p>
+      </div>
+
+      <!-- Mot de passe -->
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+          Mot de passe *
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <input 
+            id="password" 
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            class="input-field pl-10 pr-10"
+            [class.border-red-500]="password?.invalid && password?.touched"
+            placeholder="Minimum 6 caractères"
+          />
+          <button 
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center"
+          >
+            <svg *ngIf="!showPassword" class="h-5 w-5 text-gray-400 hover:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+            </svg>
+            <svg *ngIf="showPassword" class="h-5 w-5 text-gray-400 hover:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" />
+              <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+            </svg>
+          </button>
+        </div>
+        <p *ngIf="password?.invalid && password?.touched" class="mt-1 text-sm text-red-600">
+          <span *ngIf="password?.errors?.['required']">Le mot de passe est obligatoire</span>
+          <span *ngIf="password?.errors?.['minlength']">Minimum 6 caractères</span>
+        </p>
+      </div>
+
+      <!-- Confirmation mot de passe -->
+      <div>
+        <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">
+          Confirmer le mot de passe *
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <input 
+            id="confirmPassword" 
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            class="input-field pl-10"
+            [class.border-red-500]="confirmPassword?.invalid && confirmPassword?.touched"
+            placeholder="Confirmez votre mot de passe"
+          />
+        </div>
+        <p *ngIf="confirmPassword?.invalid && confirmPassword?.touched" class="mt-1 text-sm text-red-600">
+          <span *ngIf="confirmPassword?.errors?.['required']">La confirmation est obligatoire</span>
+          <span *ngIf="confirmPassword?.errors?.['passwordMismatch']">Les mots de passe ne correspondent pas</span>
+        </p>
+      </div>
+
+      <!-- Bouton d'inscription -->
+      <div>
+        <button 
+          type="submit" 
+          [disabled]="isLoading"
+          class="btn-primary w-full flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span *ngIf="!isLoading">Créer mon compte</span>
+          <span *ngIf="isLoading">Inscription en cours...</span>
+        </button>
+      </div>
+
+      <!-- Lien vers la connexion -->
+      <div class="text-center">
+        <p class="text-sm text-gray-600">
+          Déjà inscrit ? 
+          <a routerLink="/login" class="font-medium text-primary-600 hover:text-primary-500 transition duration-150">
+            Se connecter
+          </a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>

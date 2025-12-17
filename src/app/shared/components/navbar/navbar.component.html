@@ -1,0 +1,231 @@
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      
+      <!-- Logo et navigation principale -->
+      <div class="flex">
+        <!-- Logo -->
+        <div class="flex-shrink-0 flex items-center">
+          <a routerLink="/home" class="flex items-center">
+            <span class="text-2xl font-bold text-primary-600">📅</span>
+            <span class="ml-2 text-xl font-bold text-gray-900 hidden sm:block">EventHub</span>
+          </a>
+        </div>
+
+        <!-- Navigation desktop -->
+        <div class="hidden md:ml-10 md:flex md:space-x-8">
+          <a 
+            routerLink="/home" 
+            routerLinkActive="border-primary-500 text-gray-900"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150"
+          >
+            Accueil
+          </a>
+          <a 
+            routerLink="/events" 
+            routerLinkActive="border-primary-500 text-gray-900"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150"
+          >
+            Événements
+          </a>
+          <a 
+            routerLink="/events/search" 
+            routerLinkActive="border-primary-500 text-gray-900"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150"
+          >
+            Rechercher
+          </a>
+        </div>
+      </div>
+
+      <!-- Actions (droite) -->
+      <div class="flex items-center">
+        
+        <!-- Si utilisateur connecté -->
+        <div *ngIf="isLoggedIn" class="hidden md:ml-4 md:flex md:items-center md:space-x-4">
+          
+          <!-- Lien Dashboard -->
+          <a 
+            *ngIf="isOrganizer" 
+            routerLink="/organizer/dashboard"
+            class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150"
+          >
+            Mon Dashboard
+          </a>
+          <a 
+            *ngIf="isParticipant" 
+            routerLink="/participant/dashboard"
+            class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150"
+          >
+            Mon Dashboard
+          </a>
+
+          <!-- Notifications (composant NotificationBell) -->
+          <app-notification-bell></app-notification-bell>
+
+          <!-- Menu utilisateur (dropdown) -->
+          <div class="relative ml-3">
+            <div class="flex items-center space-x-3">
+              <!-- Avatar -->
+              <div class="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold">
+                {{ getUserInitials() }}
+              </div>
+              <div class="hidden lg:block">
+                <div class="text-sm font-medium text-gray-900">{{ getUserDisplayName() }}</div>
+                <div class="text-xs text-gray-500">{{ currentUser?.role === 'ORGANIZER' ? 'Organisateur' : 'Participant' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bouton Profil -->
+          <a 
+            routerLink="/profile"
+            class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition duration-150"
+          >
+            Profil
+          </a>
+
+          <!-- Bouton Déconnexion -->
+          <button 
+            (click)="logout()"
+            class="bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-md text-sm font-medium transition duration-150"
+          >
+            Déconnexion
+          </button>
+        </div>
+
+        <!-- Si utilisateur NON connecté -->
+        <div *ngIf="!isLoggedIn" class="hidden md:flex md:items-center md:space-x-4">
+          <a 
+            routerLink="/login"
+            class="text-gray-700 hover:text-primary-600 px-4 py-2 rounded-md text-sm font-medium transition duration-150"
+          >
+            Connexion
+          </a>
+          <a 
+            routerLink="/register"
+            class="bg-primary-600 text-white hover:bg-primary-700 px-4 py-2 rounded-md text-sm font-medium transition duration-150"
+          >
+            Inscription
+          </a>
+        </div>
+
+        <!-- Bouton menu mobile -->
+        <div class="flex items-center md:hidden ml-4">
+          <button 
+            (click)="toggleMobileMenu()"
+            type="button" 
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+          >
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path *ngIf="!isMobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              <path *ngIf="isMobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu mobile (affiché quand isMobileMenuOpen = true) -->
+  <div *ngIf="isMobileMenuOpen" class="md:hidden border-t border-gray-200">
+    <div class="pt-2 pb-3 space-y-1">
+      <a 
+        routerLink="/home" 
+        (click)="closeMobileMenu()"
+        routerLinkActive="bg-primary-50 border-primary-500 text-primary-700"
+        class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+      >
+        Accueil
+      </a>
+      <a 
+        routerLink="/events" 
+        (click)="closeMobileMenu()"
+        routerLinkActive="bg-primary-50 border-primary-500 text-primary-700"
+        class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+      >
+        Événements
+      </a>
+      <a 
+        routerLink="/events/search" 
+        (click)="closeMobileMenu()"
+        routerLinkActive="bg-primary-50 border-primary-500 text-primary-700"
+        class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+      >
+        Rechercher
+      </a>
+    </div>
+
+    <!-- Section utilisateur mobile -->
+    <div *ngIf="isLoggedIn" class="pt-4 pb-3 border-t border-gray-200">
+      <div class="flex items-center px-4 mb-3">
+        <div class="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold">
+          {{ getUserInitials() }}
+        </div>
+        <div class="ml-3">
+          <div class="text-base font-medium text-gray-800">{{ getUserDisplayName() }}</div>
+          <div class="text-sm text-gray-500">{{ currentUser?.email }}</div>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <a 
+          *ngIf="isOrganizer"
+          routerLink="/organizer/dashboard" 
+          (click)="closeMobileMenu()"
+          class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+        >
+          Mon Dashboard
+        </a>
+        <a 
+          *ngIf="isParticipant"
+          routerLink="/participant/dashboard" 
+          (click)="closeMobileMenu()"
+          class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+        >
+          Mon Dashboard
+        </a>
+        <a 
+          routerLink="/notifications" 
+          (click)="closeMobileMenu()"
+          class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+        >
+          Notifications
+        </a>
+        <a 
+          routerLink="/profile" 
+          (click)="closeMobileMenu()"
+          class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+        >
+          Profil
+        </a>
+        <button 
+          (click)="logout()"
+          class="block w-full text-left px-4 py-2 text-base font-medium text-red-600 hover:text-red-800 hover:bg-red-50"
+        >
+          Déconnexion
+        </button>
+      </div>
+    </div>
+
+    <!-- Boutons connexion/inscription mobile -->
+    <div *ngIf="!isLoggedIn" class="pt-4 pb-3 border-t border-gray-200">
+      <div class="space-y-1 px-4">
+        <a 
+          routerLink="/login" 
+          (click)="closeMobileMenu()"
+          class="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-primary-600 hover:bg-primary-700"
+        >
+          Connexion
+        </a>
+        <a 
+          routerLink="/register" 
+          (click)="closeMobileMenu()"
+          class="block w-full text-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50"
+        >
+          Inscription
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,370 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- En-tête -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">Mes inscriptions</h1>
+          <p class="text-gray-600">Gérez toutes vos inscriptions aux événements</p>
+        </div>
+        <button
+          routerLink="/events"
+          class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition duration-150 flex items-center"
+        >
+          <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          Explorer les événements
+        </button>
+      </div>
+    </div>
+
+    <!-- Message de succès -->
+    <div 
+      *ngIf="showSuccessMessage"
+      class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-sm animate-fade-in"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <svg class="h-6 w-6 text-green-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-green-800 font-medium">{{ successMessage }}</p>
+        </div>
+        <button
+          (click)="closeSuccessMessage()"
+          class="text-green-500 hover:text-green-700"
+        >
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      
+      <!-- Total -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 mb-1">Total</p>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.total }}</p>
+          </div>
+          <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- À venir -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 mb-1">À venir</p>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.upcoming }}</p>
+          </div>
+          <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Passés -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 mb-1">Passés</p>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.past }}</p>
+          </div>
+          <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Annulés -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-red-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 mb-1">Annulés</p>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.cancelled }}</p>
+          </div>
+          <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglets de filtrage -->
+    <div class="bg-white rounded-lg shadow-sm mb-8">
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px" aria-label="Tabs">
+          
+          <!-- Tous -->
+          <button
+            (click)="changeTab('all')"
+            class="flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm transition duration-150"
+            [ngClass]="{
+              'border-primary-500 text-primary-600': activeTab === 'all',
+              'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'all'
+            }"
+          >
+            Tous les événements
+            <span 
+              class="ml-2 px-2 py-1 text-xs rounded-full"
+              [ngClass]="{
+                'bg-primary-100 text-primary-600': activeTab === 'all',
+                'bg-gray-100 text-gray-600': activeTab !== 'all'
+              }"
+            >
+              {{ stats.total }}
+            </span>
+          </button>
+
+          <!-- À venir -->
+          <button
+            (click)="changeTab('upcoming')"
+            class="flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm transition duration-150"
+            [ngClass]="{
+              'border-primary-500 text-primary-600': activeTab === 'upcoming',
+              'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'upcoming'
+            }"
+          >
+            À venir
+            <span 
+              class="ml-2 px-2 py-1 text-xs rounded-full"
+              [ngClass]="{
+                'bg-primary-100 text-primary-600': activeTab === 'upcoming',
+                'bg-gray-100 text-gray-600': activeTab !== 'upcoming'
+              }"
+            >
+              {{ stats.upcoming }}
+            </span>
+          </button>
+
+          <!-- Passés -->
+          <button
+            (click)="changeTab('past')"
+            class="flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm transition duration-150"
+            [ngClass]="{
+              'border-primary-500 text-primary-600': activeTab === 'past',
+              'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'past'
+            }"
+          >
+            Passés
+            <span 
+              class="ml-2 px-2 py-1 text-xs rounded-full"
+              [ngClass]="{
+                'bg-primary-100 text-primary-600': activeTab === 'past',
+                'bg-gray-100 text-gray-600': activeTab !== 'past'
+              }"
+            >
+              {{ stats.past }}
+            </span>
+          </button>
+
+          <!-- Annulés -->
+          <button
+            (click)="changeTab('cancelled')"
+            class="flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm transition duration-150"
+            [ngClass]="{
+              'border-primary-500 text-primary-600': activeTab === 'cancelled',
+              'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'cancelled'
+            }"
+          >
+            Annulés
+            <span 
+              class="ml-2 px-2 py-1 text-xs rounded-full"
+              [ngClass]="{
+                'bg-primary-100 text-primary-600': activeTab === 'cancelled',
+                'bg-gray-100 text-gray-600': activeTab !== 'cancelled'
+              }"
+            >
+              {{ stats.cancelled }}
+            </span>
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <div *ngIf="isLoading" class="py-12">
+      <app-loading-spinner message="Chargement de vos inscriptions..." size="large"></app-loading-spinner>
+    </div>
+
+    <!-- Liste des inscriptions -->
+    <div *ngIf="!isLoading && filteredRegistrations.length > 0" class="space-y-4">
+      <div 
+        *ngFor="let registration of filteredRegistrations"
+        class="bg-white rounded-lg shadow-sm hover:shadow-md transition duration-200"
+      >
+        <div class="p-6">
+          <!-- En-tête -->
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+              <a 
+                [routerLink]="['/events', registration.eventId]"
+                class="block hover:text-primary-600 transition duration-150"
+              >
+                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ registration.eventTitle }}</h3>
+              </a>
+              
+              <!-- Infos événement -->
+              <div class="space-y-2">
+                <div class="flex items-center text-sm text-gray-600">
+                  <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {{ formatDate(registration.eventDate) }}
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  {{ registration.eventLocation }}
+                </div>
+                <div *ngIf="registration.notes" class="flex items-start text-sm text-gray-600">
+                  <svg class="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                  </svg>
+                  <span class="italic">{{ registration.notes }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Badge statut -->
+            <span 
+              class="px-3 py-1 text-xs font-semibold rounded-full whitespace-nowrap ml-4"
+              [ngClass]="getStatusBadgeClass(registration.status)"
+            >
+              {{ getStatusLabel(registration.status) }}
+            </span>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
+            <a
+              [routerLink]="['/events', registration.eventId]"
+              class="flex-1 bg-primary-100 text-primary-700 hover:bg-primary-200 px-4 py-2 rounded-md text-sm font-medium transition duration-150 text-center"
+            >
+              Voir les détails
+            </a>
+            
+            <button
+              *ngIf="canUnregister(registration)"
+              (click)="openCancelDialog(registration)"
+              class="flex-1 bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-md text-sm font-medium transition duration-150"
+            >
+              Se désinscrire
+            </button>
+
+            <span 
+              *ngIf="!canUnregister(registration) && registration.status !== 'CANCELLED'"
+              class="flex-1 bg-gray-100 text-gray-500 px-4 py-2 rounded-md text-sm font-medium text-center cursor-not-allowed"
+            >
+              Événement passé
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aucune inscription -->
+    <div *ngIf="!isLoading && filteredRegistrations.length === 0" class="bg-white rounded-lg shadow-sm p-12 text-center">
+      <div class="text-6xl mb-4">
+        {{ activeTab === 'all' ? '📋' : activeTab === 'upcoming' ? '📅' : activeTab === 'past' ? '✅' : '❌' }}
+      </div>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">
+        {{
+          activeTab === 'all' ? 'Aucune inscription' :
+          activeTab === 'upcoming' ? 'Aucun événement à venir' :
+          activeTab === 'past' ? 'Aucun événement passé' :
+          'Aucune inscription annulée'
+        }}
+      </h3>
+      <p class="text-gray-600 mb-6">
+        {{
+          activeTab === 'all' ? 'Vous n\'êtes inscrit à aucun événement pour le moment.' :
+          activeTab === 'upcoming' ? 'Vous n\'avez aucun événement prévu prochainement.' :
+          activeTab === 'past' ? 'Vous n\'avez pas encore participé à d\'événements.' :
+          'Vous n\'avez annulé aucune inscription.'
+        }}
+      </p>
+      <button
+        routerLink="/events"
+        class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition duration-150"
+      >
+        Découvrir des événements
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Popup de confirmation de désinscription -->
+<div 
+  *ngIf="showConfirmDialog"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+  (click)="closeCancelDialog()"
+>
+  <div 
+    class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-scale-in"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Icône d'avertissement -->
+    <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+      <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+
+    <!-- Titre -->
+    <h3 class="text-xl font-bold text-gray-900 text-center mb-2">
+      Confirmer la désinscription
+    </h3>
+
+    <!-- Message -->
+    <p class="text-gray-600 text-center mb-6">
+      Êtes-vous sûr de vouloir vous désinscrire de l'événement 
+      <span class="font-semibold">"{{ registrationToCancel?.eventTitle }}"</span> ?
+      Cette action est irréversible.
+    </p>
+
+    <!-- Boutons -->
+    <div class="flex gap-3">
+      <button
+        (click)="closeCancelDialog()"
+        [disabled]="isCancelling"
+        class="flex-1 px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-150 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Annuler
+      </button>
+      <button
+        (click)="confirmUnregister()"
+        [disabled]="isCancelling"
+        class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-150 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+      >
+        <span *ngIf="!isCancelling">Se désinscrire</span>
+        <span *ngIf="isCancelling" class="flex items-center">
+          <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Traitement...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

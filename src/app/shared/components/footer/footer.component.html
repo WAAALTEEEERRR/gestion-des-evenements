@@ -1,0 +1,97 @@
+<footer class="bg-gray-900 text-gray-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      
+      <!-- Colonne 1 : À propos -->
+      <div>
+        <h3 class="text-white text-lg font-semibold mb-4">📅 EventHub</h3>
+        <p class="text-sm text-gray-400">
+          La plateforme de gestion d'événements moderne. Organisez et participez aux meilleurs événements.
+        </p>
+      </div>
+
+      <!-- Colonne 2 : Liens rapides -->
+      <div>
+        <h3 class="text-white text-sm font-semibold uppercase tracking-wider mb-4">Navigation</h3>
+        <ul class="space-y-2">
+          <li>
+            <a routerLink="/home" class="text-sm hover:text-white transition duration-150">
+              Accueil
+            </a>
+          </li>
+          <li>
+            <a routerLink="/events" class="text-sm hover:text-white transition duration-150">
+              Événements
+            </a>
+          </li>
+          <li>
+            <a routerLink="/events/search" class="text-sm hover:text-white transition duration-150">
+              Rechercher
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Colonne 3 : Compte -->
+      <div>
+        <h3 class="text-white text-sm font-semibold uppercase tracking-wider mb-4">Mon Compte</h3>
+        <ul class="space-y-2">
+          <li>
+            <a routerLink="/login" class="text-sm hover:text-white transition duration-150">
+              Connexion
+            </a>
+          </li>
+          <li>
+            <a routerLink="/register" class="text-sm hover:text-white transition duration-150">
+              Inscription
+            </a>
+          </li>
+          <li>
+            <a routerLink="/profile" class="text-sm hover:text-white transition duration-150">
+              Mon Profil
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Colonne 4 : Contact -->
+      <div>
+        <h3 class="text-white text-sm font-semibold uppercase tracking-wider mb-4">Contact</h3>
+        <ul class="space-y-2">
+          <li class="text-sm">
+            <span class="block">📧 contact@eventhub.com</span>
+          </li>
+          <li class="text-sm">
+            <span class="block">📞 023 xx xx xx</span>
+          </li>
+          <li class="text-sm">
+            <span class="block">📍 Alger, Algérie</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Séparateur -->
+    <div class="border-t border-gray-800 mt-8 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <!-- Copyright -->
+        <p class="text-sm text-gray-400">
+          © {{ currentYear }} EventHub. Tous droits réservés.
+        </p>
+
+        <!-- Liens légaux -->
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="#" class="text-sm text-gray-400 hover:text-white transition duration-150">
+            Mentions légales
+          </a>
+          <a href="#" class="text-sm text-gray-400 hover:text-white transition duration-150">
+            Politique de confidentialité
+          </a>
+          <a href="#" class="text-sm text-gray-400 hover:text-white transition duration-150">
+            CGU
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

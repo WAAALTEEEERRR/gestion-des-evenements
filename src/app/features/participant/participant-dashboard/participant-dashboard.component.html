@@ -1,0 +1,218 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- En-tête -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        {{ getGreeting() }}, {{ participantName }} 👋
+      </h1>
+      <p class="text-gray-600">Découvrez vos événements et explorez de nouvelles opportunités</p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      
+      <!-- Total inscriptions -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 mb-1">Mes inscriptions</p>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ isLoadingRegistrations ? '...' : stats.totalRegistrations }}
+            </p>
+          </div>
+          <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Événements à venir -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 mb-1">À venir</p>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ isLoadingRegistrations ? '...' : stats.upcomingEvents }}
+            </p>
+          </div>
+          <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Événements passés -->
+      <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 mb-1">Événements passés</p>
+            <p class="text-3xl font-bold text-gray-900">
+              {{ isLoadingRegistrations ? '...' : stats.pastEvents }}
+            </p>
+          </div>
+          <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Actions rapides</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Explorer les événements -->
+        <button
+          (click)="exploreEvents()"
+          class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition duration-150"
+        >
+          <div class="h-12 w-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
+            <svg class="h-6 w-6 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div class="text-left">
+            <p class="font-semibold text-gray-900">Explorer les événements</p>
+            <p class="text-sm text-gray-600">Découvrez tous les événements disponibles</p>
+          </div>
+        </button>
+
+        <!-- Voir mes inscriptions -->
+        <button
+          (click)="viewMyRegistrations()"
+          class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition duration-150"
+        >
+          <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+            <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <div class="text-left">
+            <p class="font-semibold text-gray-900">Mes inscriptions</p>
+            <p class="text-sm text-gray-600">Gérer toutes mes inscriptions</p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mes prochains événements -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900">Mes prochains événements</h2>
+        <button
+          (click)="viewMyRegistrations()"
+          class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center"
+        >
+          Voir tout
+          <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Chargement -->
+      <div *ngIf="isLoadingRegistrations" class="py-12">
+        <app-loading-spinner message="Chargement de vos événements..." size="medium"></app-loading-spinner>
+      </div>
+
+      <!-- Liste des prochains événements -->
+      <div *ngIf="!isLoadingRegistrations && upcomingEvents.length > 0" class="space-y-4">
+        <div *ngFor="let registration of upcomingEvents" 
+             (click)="viewEventDetails(registration.eventId)"
+             class="border border-gray-200 rounded-lg p-4 hover:border-primary-500 hover:shadow-md transition duration-150 cursor-pointer">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ registration.eventTitle }}</h3>
+              <div class="space-y-1">
+                <div class="flex items-center text-sm text-gray-600">
+                  <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {{ formatDate(registration.eventDate) }}
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  {{ registration.eventLocation }}
+                </div>
+              </div>
+            </div>
+            <span 
+              class="px-3 py-1 text-xs font-semibold rounded-full"
+              [ngClass]="{
+                'bg-green-100 text-green-800': registration.status === 'CONFIRMED',
+                'bg-yellow-100 text-yellow-800': registration.status === 'PENDING',
+                'bg-blue-100 text-blue-800': registration.status === 'ATTENDED'
+              }"
+            >
+              {{ registration.status === 'CONFIRMED' ? 'Confirmé' : registration.status === 'PENDING' ? 'En attente' : 'Présent' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aucun événement à venir -->
+      <div *ngIf="!isLoadingRegistrations && upcomingEvents.length === 0" class="text-center py-12">
+        <div class="text-6xl mb-4">📅</div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucun événement à venir</h3>
+        <p class="text-gray-600 mb-6">
+          Vous n'êtes inscrit à aucun événement pour le moment.
+        </p>
+        <button
+          (click)="exploreEvents()"
+          class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition duration-150"
+        >
+          Découvrir des événements
+        </button>
+      </div>
+    </div>
+
+    <!-- Événements suggérés -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900">Événements suggérés</h2>
+        <button
+          (click)="exploreEvents()"
+          class="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center"
+        >
+          Voir tous les événements
+          <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Chargement -->
+      <div *ngIf="isLoadingEvents" class="py-12">
+        <app-loading-spinner message="Chargement des suggestions..." size="medium"></app-loading-spinner>
+      </div>
+
+      <!-- Grille d'événements -->
+      <div *ngIf="!isLoadingEvents && availableEvents.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <app-event-card
+          *ngFor="let event of availableEvents"
+          [event]="event"
+          [showActions]="false"
+          [displayMode]="'card'"
+        ></app-event-card>
+      </div>
+
+      <!-- Aucune suggestion -->
+      <div *ngIf="!isLoadingEvents && availableEvents.length === 0" class="text-center py-12">
+        <div class="text-6xl mb-4">🎉</div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucun événement disponible</h3>
+        <p class="text-gray-600">Revenez bientôt pour découvrir de nouveaux événements !</p>
+      </div>
+    </div>
+
+  </div>
+</div>

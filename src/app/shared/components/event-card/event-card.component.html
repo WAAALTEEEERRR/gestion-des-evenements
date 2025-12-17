@@ -1,0 +1,202 @@
+<!-- Mode CARD (Carte) -->
+<div *ngIf="displayMode === 'card'" class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
+  
+  <!-- Image de l'événement (placeholder avec icône) -->
+  <div class="h-48 bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center">
+    <span class="text-6xl">{{ getCategoryIcon(event.category) }}</span>
+  </div>
+
+  <!-- Contenu de la carte -->
+  <div class="p-5">
+    
+    <!-- En-tête : Catégorie + Statut -->
+    <div class="flex items-center justify-between mb-3">
+      <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-primary-100 text-primary-800">
+        {{ event.category }}
+      </span>
+      <span 
+        *ngIf="showActions"
+        class="inline-block px-3 py-1 text-xs font-semibold rounded-full"
+        [ngClass]="getStatusClass()"
+      >
+        {{ getStatusLabel() }}
+      </span>
+    </div>
+
+    <!-- Titre (lien vers les détails) -->
+    <a 
+      [routerLink]="['/events', event.id]"
+      class="block hover:text-primary-600 transition duration-150"
+    >
+      <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+        {{ event.title }}
+      </h3>
+    </a>
+
+    <!-- Date et lieu -->
+    <div class="space-y-2 mb-4">
+      <div class="flex items-center text-sm text-gray-600">
+        <svg class="h-4 w-4 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span class="line-clamp-1">{{ formatDate(event.eventDate) }}</span>
+      </div>
+      <div class="flex items-center text-sm text-gray-600">
+        <svg class="h-4 w-4 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span class="line-clamp-1">{{ event.location }}</span>
+      </div>
+      <div class="flex items-center text-sm text-gray-600">
+        <svg class="h-4 w-4 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <span>{{ event.currentParticipants || 0 }} / {{ event.capacity }} participants</span>
+      </div>
+    </div>
+
+    <!-- Pied de carte : Badge disponibilité + Prix -->
+    <div class="flex items-center justify-between mb-4">
+      <span 
+        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+        [ngClass]="getBadgeClass()"
+      >
+        {{ getAvailabilityBadge() }}
+      </span>
+      <span class="text-sm font-semibold" [ngClass]="event.isFree ? 'text-green-600' : 'text-gray-900'">
+        {{ event.isFree ? 'Gratuit' : event.price + ' DA' }}
+      </span>
+    </div>
+
+    <!-- Boutons d'action (si showActions = true) -->
+    <div *ngIf="showActions" class="flex gap-2 pt-4 border-t border-gray-200">
+      <button 
+        (click)="onEdit()"
+        class="flex-1 bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-2 rounded-md text-sm font-medium transition duration-150"
+      >
+        Modifier
+      </button>
+      <button 
+        (click)="onViewParticipants()"
+        class="flex-1 bg-green-100 text-green-700 hover:bg-green-200 px-3 py-2 rounded-md text-sm font-medium transition duration-150"
+      >
+        Participants
+      </button>
+      <button 
+        (click)="onDelete()"
+        class="flex-1 bg-red-100 text-red-700 hover:bg-red-200 px-3 py-2 rounded-md text-sm font-medium transition duration-150"
+      >
+        Supprimer
+      </button>
+    </div>
+
+    <!-- Bouton "Voir détails" (si pas d'actions) -->
+    <a 
+      *ngIf="!showActions"
+      [routerLink]="['/events', event.id]"
+      class="block w-full bg-primary-600 text-white text-center px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-700 transition duration-150"
+    >
+      Voir les détails
+    </a>
+  </div>
+</div>
+
+<!-- Mode LIST (Liste - version compacte) -->
+<div *ngIf="displayMode === 'list'" class="bg-white rounded-lg shadow hover:shadow-md transition duration-200 p-4">
+  <div class="flex items-start gap-4">
+    
+    <!-- Icône catégorie -->
+    <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-lg flex items-center justify-center">
+      <span class="text-3xl">{{ getCategoryIcon(event.category) }}</span>
+    </div>
+
+    <!-- Contenu -->
+    <div class="flex-1 min-w-0">
+      
+      <!-- En-tête -->
+      <div class="flex items-start justify-between mb-2">
+        <div class="flex-1">
+          <a 
+            [routerLink]="['/events', event.id]"
+            class="block hover:text-primary-600 transition duration-150"
+          >
+            <h3 class="text-lg font-bold text-gray-900 line-clamp-1">
+              {{ event.title }}
+            </h3>
+          </a>
+          <p class="text-sm text-gray-600 line-clamp-1 mt-1">
+            {{ event.description }}
+          </p>
+        </div>
+        <div class="flex items-center gap-2 ml-4">
+          <span 
+            class="inline-block px-2 py-1 text-xs font-semibold rounded bg-primary-100 text-primary-800"
+          >
+            {{ event.category }}
+          </span>
+          <span 
+            *ngIf="showActions"
+            class="inline-block px-2 py-1 text-xs font-semibold rounded"
+            [ngClass]="getStatusClass()"
+          >
+            {{ getStatusLabel() }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Infos compactes -->
+      <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+        <span class="flex items-center">
+          <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          {{ formatDateShort(event.eventDate) }}
+        </span>
+        <span class="flex items-center">
+          <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          </svg>
+          {{ event.location }}
+        </span>
+        <span class="flex items-center">
+          <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          {{ event.currentParticipants || 0 }}/{{ event.capacity }}
+        </span>
+        <span 
+          class="px-2 py-1 rounded-full text-xs font-medium"
+          [ngClass]="getBadgeClass()"
+        >
+          {{ getAvailabilityBadge() }}
+        </span>
+        <span class="font-semibold" [ngClass]="event.isFree ? 'text-green-600' : 'text-gray-900'">
+          {{ event.isFree ? 'Gratuit' : event.price + ' DA' }}
+        </span>
+      </div>
+
+      <!-- Actions (mode liste) -->
+      <div *ngIf="showActions" class="flex gap-2">
+        <button 
+          (click)="onEdit()"
+          class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1 rounded text-xs font-medium transition duration-150"
+        >
+          Modifier
+        </button>
+        <button 
+          (click)="onViewParticipants()"
+          class="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded text-xs font-medium transition duration-150"
+        >
+          Participants
+        </button>
+        <button 
+          (click)="onDelete()"
+          class="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded text-xs font-medium transition duration-150"
+        >
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

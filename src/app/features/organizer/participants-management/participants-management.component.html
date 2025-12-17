@@ -1,0 +1,255 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- En-tête -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <button
+          (click)="goBack()"
+          class="mb-4 flex items-center text-gray-600 hover:text-gray-900 transition duration-150"
+        >
+          <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Retour à mes événements
+        </button>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Gestion des participants</h1>
+        <p *ngIf="event" class="text-gray-600">{{ event.title }}</p>
+      </div>
+      <button
+        (click)="exportList()"
+        class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-150 flex items-center"
+      >
+        <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        Exporter la liste
+      </button>
+    </div>
+
+    <!-- Erreur -->
+    <div *ngIf="error" class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
+      <svg class="h-6 w-6 text-red-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p class="text-red-800 font-medium">{{ error }}</p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
+        <p class="text-sm text-gray-600 mb-1">Total</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats.total }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-green-500">
+        <p class="text-sm text-gray-600 mb-1">Confirmés</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats.confirmed }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-yellow-500">
+        <p class="text-sm text-gray-600 mb-1">En attente</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats.pending }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
+        <p class="text-sm text-gray-600 mb-1">Présents</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats.attended }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-gray-500">
+        <p class="text-sm text-gray-600 mb-1">Absents</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats.noShow }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-red-500">
+        <p class="text-sm text-gray-600 mb-1">Annulés</p>
+        <p class="text-2xl font-bold text-gray-900">{{ stats.cancelled }}</p>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div class="flex flex-wrap gap-3 mb-4">
+        <button
+          (click)="onFilterChange('all')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-primary-600 text-white': selectedFilter === 'all',
+            'bg-gray-100 text-gray-700 hover:bg-gray-200': selectedFilter !== 'all'
+          }"
+        >
+          Tous ({{ stats.total }})
+        </button>
+        <button
+          (click)="onFilterChange('confirmed')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-green-600 text-white': selectedFilter === 'confirmed',
+            'bg-green-100 text-green-700 hover:bg-green-200': selectedFilter !== 'confirmed'
+          }"
+        >
+          Confirmés ({{ stats.confirmed }})
+        </button>
+        <button
+          (click)="onFilterChange('pending')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-yellow-600 text-white': selectedFilter === 'pending',
+            'bg-yellow-100 text-yellow-700 hover:bg-yellow-200': selectedFilter !== 'pending'
+          }"
+        >
+          En attente ({{ stats.pending }})
+        </button>
+        <button
+          (click)="onFilterChange('attended')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-blue-600 text-white': selectedFilter === 'attended',
+            'bg-blue-100 text-blue-700 hover:bg-blue-200': selectedFilter !== 'attended'
+          }"
+        >
+          Présents ({{ stats.attended }})
+        </button>
+        <button
+          (click)="onFilterChange('noShow')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-gray-600 text-white': selectedFilter === 'noShow',
+            'bg-gray-100 text-gray-700 hover:bg-gray-200': selectedFilter !== 'noShow'
+          }"
+        >
+          Absents ({{ stats.noShow }})
+        </button>
+        <button
+          (click)="onFilterChange('cancelled')"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition duration-150"
+          [ngClass]="{
+            'bg-red-600 text-white': selectedFilter === 'cancelled',
+            'bg-red-100 text-red-700 hover:bg-red-200': selectedFilter !== 'cancelled'
+          }"
+        >
+          Annulés ({{ stats.cancelled }})
+        </button>
+      </div>
+
+      <!-- Barre de recherche -->
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          placeholder="Rechercher un participant (nom, email)..."
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+        />
+        <svg class="absolute left-3 top-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+
+      <!-- Compteur -->
+      <p class="text-sm text-gray-600 mt-4">
+        <span class="font-semibold text-gray-900">{{ filteredRegistrations.length }}</span>
+        {{ filteredRegistrations.length > 1 ? 'participants trouvés' : 'participant trouvé' }}
+      </p>
+    </div>
+
+    <!-- Chargement -->
+    <app-loading-spinner 
+      *ngIf="isLoadingRegistrations" 
+      message="Chargement des participants..."
+      size="large"
+    ></app-loading-spinner>
+
+    <!-- Table des participants -->
+    <div *ngIf="!isLoadingRegistrations && !error" class="bg-white rounded-lg shadow-sm overflow-hidden">
+      
+      <!-- Aucun participant -->
+      <div *ngIf="filteredRegistrations.length === 0" class="p-12 text-center">
+        <div class="text-6xl mb-4">👥</div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucun participant</h3>
+        <p class="text-gray-600">
+          {{ searchTerm ? 'Aucun participant ne correspond à votre recherche.' : 'Aucune inscription pour cet événement.' }}
+        </p>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="filteredRegistrations.length > 0" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Participant
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Email
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Date d'inscription
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Statut
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let registration of filteredRegistrations" class="hover:bg-gray-50">
+              
+              <!-- Nom -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center mr-3">
+                    <span class="text-primary-600 font-semibold">
+                      {{ registration.userName?.charAt(0) || '?' }}
+                    </span>
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">
+                      {{ registration.userName || 'Non spécifié' }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Email -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ registration.userEmail || 'N/A' }}</div>
+              </td>
+
+              <!-- Date inscription -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ formatDate(registration.registeredAt) }}</div>
+              </td>
+
+              <!-- Statut -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span 
+                  class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                  [ngClass]="getStatusClass(registration.status)"
+                >
+                  {{ getStatusLabel(registration.status) }}
+                </span>
+              </td>
+
+              <!-- Actions -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm">
+                <div class="relative inline-block text-left">
+                  <select
+                    (change)="changeStatus(registration, $any($event.target).value)"
+                    [value]="registration.status"
+                    class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="PENDING">En attente</option>
+                    <option value="CONFIRMED">Confirmé</option>
+                    <option value="ATTENDED">Présent</option>
+                    <option value="NO_SHOW">Absent</option>
+                    <option value="CANCELLED">Annulé</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

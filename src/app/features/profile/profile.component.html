@@ -1,0 +1,260 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- En-tête -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Mon profil</h1>
+      <p class="text-gray-600">Gérez vos informations personnelles</p>
+    </div>
+
+    <!-- Message de succès -->
+    <div 
+      *ngIf="showSuccessMessage"
+      class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-sm animate-fade-in"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <svg class="h-6 w-6 text-green-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-green-800 font-medium">{{ successMessage }}</p>
+        </div>
+        <button
+          (click)="closeSuccessMessage()"
+          class="text-green-500 hover:text-green-700"
+        >
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div 
+      *ngIf="errorMessage"
+      class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-sm"
+    >
+      <div class="flex items-center">
+        <svg class="h-6 w-6 text-red-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-red-800 font-medium">{{ errorMessage }}</p>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <div *ngIf="isLoading" class="py-12">
+      <app-loading-spinner message="Chargement de votre profil..." size="large"></app-loading-spinner>
+    </div>
+
+    <!-- Contenu principal -->
+    <div *ngIf="!isLoading && user" class="bg-white rounded-lg shadow-sm overflow-hidden">
+      
+      <!-- En-tête de la carte -->
+      <div class="bg-gradient-to-r from-primary-500 to-secondary-500 px-6 py-8">
+        <div class="flex items-center">
+          <!-- Avatar avec initiales -->
+          <div class="h-20 w-20 rounded-full bg-white flex items-center justify-center text-2xl font-bold text-primary-600 shadow-lg">
+            {{ user.firstName.charAt(0).toUpperCase() }}{{ user.lastName.charAt(0).toUpperCase() }}
+          </div>
+          
+          <!-- Nom et rôle -->
+          <div class="ml-6">
+            <h2 class="text-2xl font-bold text-white mb-2">
+              {{ user.firstName }} {{ user.lastName }}
+            </h2>
+            <span 
+              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold"
+              [ngClass]="getRoleBadgeClass(user.role)"
+            >
+              {{ getRoleLabel(user.role) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Corps de la carte -->
+      <div class="px-6 py-8">
+        
+        <!-- Section : Informations personnelles -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-900">Informations personnelles</h3>
+            
+            <!-- Bouton Modifier / Annuler -->
+            <button
+              *ngIf="!isEditing"
+              (click)="enableEditing()"
+              class="px-4 py-2 bg-primary-100 text-primary-700 hover:bg-primary-200 rounded-lg transition duration-150 flex items-center text-sm font-medium"
+            >
+              <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Modifier
+            </button>
+
+            <button
+              *ngIf="isEditing"
+              (click)="cancelEditing()"
+              class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg transition duration-150 flex items-center text-sm font-medium"
+            >
+              <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Annuler
+            </button>
+          </div>
+
+          <!-- Formulaire -->
+          <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              <!-- Email (non modifiable) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <div class="flex items-center px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <svg class="h-5 w-5 text-gray-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span class="text-gray-700">{{ user.email }}</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">L'email ne peut pas être modifié</p>
+              </div>
+
+              <!-- Rôle (non modifiable) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Rôle
+                </label>
+                <div class="flex items-center px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <svg class="h-5 w-5 text-gray-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span class="text-gray-700">{{ getRoleLabel(user.role) }}</span>
+                </div>
+              </div>
+
+              <!-- Prénom -->
+              <div>
+                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">
+                  Prénom <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  formControlName="firstName"
+                  class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-150"
+                  [class.border-gray-300]="!hasError('firstName', 'required') && !hasError('firstName', 'minlength')"
+                  [class.border-red-500]="hasError('firstName', 'required') || hasError('firstName', 'minlength')"
+                  [class.bg-gray-50]="!isEditing"
+                  placeholder="Votre prénom"
+                />
+                <p *ngIf="hasError('firstName', 'required') || hasError('firstName', 'minlength')" class="text-red-500 text-xs mt-1">
+                  {{ getErrorMessage('firstName') }}
+                </p>
+              </div>
+
+              <!-- Nom -->
+              <div>
+                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">
+                  Nom <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  formControlName="lastName"
+                  class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-150"
+                  [class.border-gray-300]="!hasError('lastName', 'required') && !hasError('lastName', 'minlength')"
+                  [class.border-red-500]="hasError('lastName', 'required') || hasError('lastName', 'minlength')"
+                  [class.bg-gray-50]="!isEditing"
+                  placeholder="Votre nom"
+                />
+                <p *ngIf="hasError('lastName', 'required') || hasError('lastName', 'minlength')" class="text-red-500 text-xs mt-1">
+                  {{ getErrorMessage('lastName') }}
+                </p>
+              </div>
+
+              <!-- Téléphone -->
+              <div class="md:col-span-2">
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+                  Téléphone (optionnel)
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  formControlName="phone"
+                  class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-150"
+                  [class.border-gray-300]="!hasError('phone', 'pattern')"
+                  [class.border-red-500]="hasError('phone', 'pattern')"
+                  [class.bg-gray-50]="!isEditing"
+                  placeholder="Ex: 0612345678"
+                />
+                <p *ngIf="hasError('phone', 'pattern')" class="text-red-500 text-xs mt-1">
+                  {{ getErrorMessage('phone') }}
+                </p>
+                <p *ngIf="!hasError('phone', 'pattern')" class="text-xs text-gray-500 mt-1">
+                  Format attendu : 10 chiffres (Ex: 0612345678)
+                </p>
+              </div>
+            </div>
+
+            <!-- Bouton Enregistrer -->
+            <div *ngIf="isEditing" class="mt-8 flex justify-end">
+              <button
+                type="submit"
+                [disabled]="profileForm.invalid || isSaving"
+                class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition duration-150 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              >
+                <span *ngIf="!isSaving">Enregistrer les modifications</span>
+                <span *ngIf="isSaving" class="flex items-center">
+                  <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Enregistrement...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Section : Informations du compte -->
+        <div class="pt-8 border-t border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Informations du compte</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Date de création -->
+            <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+              <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm text-gray-600">Membre depuis</p>
+                <p class="text-base font-semibold text-gray-900">{{ formatDate(user.createdAt) }}</p>
+              </div>
+            </div>
+
+            <!-- Identifiant -->
+            <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+              <div class="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <svg class="h-6 w-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                </svg>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm text-gray-600">Identifiant</p>
+                <p class="text-base font-semibold text-gray-900">#{{ user.id }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
